@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { authApi } from "./api/authApi.js"; // import your RTK Query api
 
 const initialState = {
   user: null,
@@ -21,4 +22,11 @@ const authSlice = createSlice({
 });
 
 export const { userLoggedIn, userLoggedOut } = authSlice.actions;
+
+// thunk to log out and reset api state
+export const logoutUser = () => (dispatch) => {
+  dispatch(userLoggedOut());
+  dispatch(authApi.util.resetApiState());
+};
+
 export default authSlice.reducer;

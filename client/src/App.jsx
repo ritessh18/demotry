@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import Login from "./pages/login";
 import HeroSection from "./pages/student/HeroSection";
 import MainLayout from "./layout/MainLayout";
@@ -13,6 +12,24 @@ import Dashboard from "./pages/admin/Dashboard";
 import CourseTable from "./pages/admin/course/CourseTable";
 import AddCourse from "./pages/admin/course/AddCourse";
 import EditCourse from "./pages/admin/course/EditCourse";
+import CreateLecture from "./pages/admin/lecture/createLecture";
+import EditLecture from "./pages/admin/lecture/EditLecture";
+import CourseDetail from "./pages/student/CourseDetail";
+import CourseProgress from "./pages/student/CourseProgress";
+import PaymentPage from "./pages/PayementPage";
+import SearchPage from "./pages/student/SearchPage";
+import EditRole from "./pages/admin/EditRole";
+
+// import route guards
+import {
+  ProtectedRoute,
+  AuthenticatedUser,
+  AdminRoute,
+} from "./components/ProtectedRoutes"; // adjust path as needed
+import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
+import { ThemeProvider } from "./components/ThemeProvider";
+
+
 
 
 const appRouter = createBrowserRouter([
@@ -25,47 +42,135 @@ const appRouter = createBrowserRouter([
         element: (
           <>
             <HeroSection />
-            <Courses/>
+            <Courses />
           </>
         ),
       },
       {
-        path:"login",
-        element:<Login/>
+        path: "login",
+        element: (
+          <AuthenticatedUser>
+            <Login />
+          </AuthenticatedUser>
+        ),
       },
       {
-        path:"my-learning",
-        element:<MyLearning/>
+        path: "my-learning",
+        element: (
+          <ProtectedRoute>
+            <MyLearning />
+          </ProtectedRoute>
+        ),
       },
       {
-        path:"profile",
-        element:<Profile/>
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "course/search",
+        element: (
+          <ProtectedRoute>
+            <SearchPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "course-detail/:courseId",
+        element: (
+          <ProtectedRoute>
+            <CourseDetail />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "course-progress/:courseId",
+        element: (
+          <PurchaseCourseProtectedRoute>
+            <ProtectedRoute>
+              <CourseProgress />
+            </ProtectedRoute>
+          </PurchaseCourseProtectedRoute>
+        ),
       },
 
-      // admin routes start from here
       {
-        path:"admin",
-        element:<Sidebar/>,
-        children:[
+        path: "payment/:courseId",
+        element: (
+            <PaymentPage />
+        ),
+      },
+
+      // Admin routes (protected & role-checked)
+      {
+        path: "admin",
+        element: (
+          <AdminRoute>
+            <Sidebar />
+          </AdminRoute>
+        ),
+        children: [
           {
-            path:"dashboard",
-            element:<Dashboard/>
+            path: "dashboard",
+            element: (
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            ),
           },
-           {
-            path:"course",
-            element:<CourseTable/>
+          {
+            path: "course",
+            element: (
+              <AdminRoute>
+                <CourseTable />
+              </AdminRoute>
+            ),
           },
-           {
-            path:"course/create",
-            element:<AddCourse/>
+          {
+            path: "course/create",
+            element: (
+              <AdminRoute>
+                <AddCourse />
+              </AdminRoute>
+            ),
           },
-           {
-            path:"course/:courseId",
-            element:<EditCourse/>
-          }
-        ]
-      }
-
+          {
+            path: "course/:courseId",
+            element: (
+              <AdminRoute>
+                <EditCourse />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "course/:courseId/lecture",
+            element: (
+              <AdminRoute>
+                <CreateLecture />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "course/:courseId/lecture/:lectureId",
+            element: (
+              <AdminRoute>
+                <EditLecture />
+              </AdminRoute>
+            ),
+          },
+            {
+            path: "editRole",
+            element: (
+            <AdminRoute>
+              <EditRole />
+            </AdminRoute>
+            ),
+          },
+        ],
+      },
     ],
   },
 ]);
@@ -73,7 +178,9 @@ const appRouter = createBrowserRouter([
 function App() {
   return (
     <main>
-      <RouterProvider router={appRouter}/>
+      <ThemeProvider> 
+      <RouterProvider router={appRouter} />
+      </ThemeProvider>
     </main>
   );
 }

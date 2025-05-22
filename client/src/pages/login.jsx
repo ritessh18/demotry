@@ -14,9 +14,9 @@ import {
   useLoginUserMutation,
   useRegisterUserMutation,
 } from "@/features/api/authApi";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -29,6 +29,10 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  // Password visibility states
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   const [
     registerUser,
@@ -49,7 +53,19 @@ const Login = () => {
     },
   ] = useLoginUserMutation();
 
-  const navigate =  useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Tab state controlled by query param
+  const [tabValue, setTabValue] = useState("login");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab === "signup" || tab === "login") {
+      setTabValue(tab);
+    }
+  }, [location.search]);
 
   const changeInputHandler = (e, type) => {
     const { name, value } = e.target;
@@ -69,20 +85,17 @@ const Login = () => {
   useEffect(() => {
     if (registerIsSuccess && registerData) {
       toast.success(registerData.message || "Signup successfully.");
+      setTabValue("login");
     }
     if (registerError) {
-      toast.error(
-        registerError.data.message || "Signup failed"
-      );
+      toast.error(registerError.data.message || "Signup failed");
     }
     if (loginIsSuccess && loginData) {
       toast.success(loginData.message || "Login successfully.");
       navigate("/");
     }
     if (loginError) {
-      toast.error(
-        loginError.data.message || "Login failed"
-      );
+      toast.error(loginError.data.message || "Login failed");
     }
   }, [
     loginIsLoading,
@@ -95,7 +108,7 @@ const Login = () => {
 
   return (
     <div className="flex items-center w-full justify-center mt-25">
-      <Tabs defaultValue="login" className="w-[400px]">
+      <Tabs value={tabValue} onValueChange={setTabValue} className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
           <TabsTrigger value="login">Log In</TabsTrigger>
@@ -134,14 +147,32 @@ const Login = () => {
               </div>
               <div className="space-y-1">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  name="password"
-                  value={signupInput.password}
-                  onChange={(e) => changeInputHandler(e, "signup")}
-                  placeholder="eg. abc@$&$123"
-                  required={true}
-                />
+                <div className="relative">
+                  <Input
+                    type={showSignupPassword ? "text" : "password"}
+                    name="password"
+                    value={signupInput.password}
+                    onChange={(e) => changeInputHandler(e, "signup")}
+                    placeholder="eg. abc@$&$123"
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(!showSignupPassword)}
+                    className="absolute inset-y-0 right-2 flex items-center px-1 text-gray-400 hover:text-gray-700 focus:outline-none"
+                    tabIndex={-1}
+                    aria-label={
+                      showSignupPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showSignupPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
               </div>
             </CardContent>
             <CardFooter>
@@ -184,14 +215,32 @@ const Login = () => {
               </div>
               <div className="space-y-1">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  name="password"
-                  value={loginInput.password}
-                  onChange={(e) => changeInputHandler(e, "login")}
-                  placeholder="eg. abc@$&$123"
-                  required={true}
-                />
+                <div className="relative">
+                  <Input
+                    type={showLoginPassword ? "text" : "password"}
+                    name="password"
+                    value={loginInput.password}
+                    onChange={(e) => changeInputHandler(e, "login")}
+                    placeholder="eg. abc@$&$123"
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute inset-y-0 right-2 flex items-center px-1 text-gray-400 hover:text-gray-700 focus:outline-none"
+                    tabIndex={-1}
+                    aria-label={
+                      showLoginPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showLoginPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
               </div>
             </CardContent>
             <CardFooter>

@@ -21,42 +21,104 @@ const CourseTable = () => {
   if (isLoading) return <h1>Loading....</h1>;
   console.log("data -> ", data);
 
+  // return (
+  //   <div>
+  //     <Button onClick={() => navigate(`create`)}>Create a new Course</Button>
+  //     <Table>
+  //       <TableCaption>A list of your recent courses.</TableCaption>
+  //       <TableHeader>
+  //         <TableRow>
+  //           <TableHead className="w-[100px]">Price</TableHead>
+  //           <TableHead>Status</TableHead>
+  //           <TableHead>Title</TableHead>
+  //           <TableHead className="text-right">Action</TableHead>
+  //         </TableRow>
+  //       </TableHeader>
+  //       <TableBody>
+  //         {data.courses.map((course) => (
+  //           <TableRow key={course._id}>
+  //             <TableCell className="font-medium">
+  //               {course?.coursePrice || "NA"}
+  //             </TableCell>
+  //             <TableCell>
+  //               <Badge
+  //                 className={`${
+  //                   course.isPublished
+  //                     ? "bg-green-500 text-white"
+  //                     : "bg-gray-300 text-black"
+  //                 } text-sm`}
+  //               >
+  //                 {course.isPublished ? "Published" : "Draft"}
+  //               </Badge>
+  //             </TableCell>
+  //             <TableCell>{course.courseTitle}</TableCell>
+  //             <TableCell className="text-right">
+  //               <Button
+  //                 size="sm"
+  //                 variant="ghost"
+  //                 onClick={() => navigate(`${course._id}`)}
+  //               >
+  //                 <Edit />
+  //               </Button>
+  //             </TableCell>
+  //           </TableRow>
+  //         ))}
+  //       </TableBody>
+  //     </Table>
+  //   </div>
+  // );
+
   return (
     <div>
       <Button onClick={() => navigate(`create`)}>Create a new Course</Button>
-      <Table>
-        <TableCaption>A list of your recent courses.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Price</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead className="text-right">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.courses.map((course) => (
-            <TableRow key={course._id}>
-              <TableCell className="font-medium">
-                {course?.coursePrice || "NA"}
-              </TableCell>
-              <TableCell>
-                <Badge>{course.isPublished ? "Published" : "Draft"}</Badge>
-              </TableCell>
-              <TableCell>{course.courseTitle}</TableCell>
-              <TableCell className="text-right">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => navigate(`${course._id}`)}
-                >
-                  <Edit />
-                </Button>
-              </TableCell>
+      <div className="mt-4 overflow-x-auto w-full">
+        <Table>
+          <TableCaption>A list of your recent courses.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Price</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {data.courses.map((course) => (
+              <TableRow key={course._id}>
+                <TableCell className="font-medium">
+                  {course?.coursePrice || "NA"}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
+                      course.isPublished
+                        ? "bg-green-100 text-green-700 border border-green-300"
+                        : "bg-gray-100 text-gray-600 border border-gray-300"
+                    }`}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        course.isPublished ? "bg-green-500" : "bg-gray-400"
+                      }`}
+                    ></span>
+                    {course.isPublished ? "Published" : "Draft"}
+                  </Badge>
+                </TableCell>
+                <TableCell>{course.courseTitle}</TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => navigate(`${course._id}`)}
+                  >
+                    <Edit />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
